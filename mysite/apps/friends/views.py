@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import Invite, Friend
-from .serializers import InviteSerializer, FriendSerializer
+from .serializers import InviteSerializer, FriendSerializer, FriendAcceptSerializer
 
 
 class InviteFriend(generics.CreateAPIView):
@@ -28,4 +28,7 @@ class DeleteFriend(generics.DestroyAPIView):
     queryset = Friend.objects.all()
 
 
-# Принятие инвайта - передаем toUser, fromUser, потом сохраняем в таблицу friends эти поля
+class AcceptInvite(generics.CreateAPIView):
+    serializer_class = FriendAcceptSerializer
+    queryset = Friend.objects.all()
+
