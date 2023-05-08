@@ -1,11 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Invite, Friend
+from .models import Friend
 from rest_framework import serializers
 from django.http import Http404
-class InviteSerializer(ModelSerializer):
-    class Meta:
-        model = Invite
-        fields = ("fromUser","toUser",)
 
 class FriendSerializer(ModelSerializer):
     class Meta:
