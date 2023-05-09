@@ -8,8 +8,6 @@ from apps.userProfile.serializers import UserProfileSerializer
 from rest_framework import status
 from itertools import chain
 
-
-# возврат при автомате друзья
 class ActionInvite(viewsets.ViewSet):
 
     def create(self, request):
