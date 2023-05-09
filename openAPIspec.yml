@@ -149,7 +149,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /user/{int:user_id}/target/{int:target_id}/status:
+  /user/{user_id}/target/{target_id}/status:
     get:
       summary: Метод получения статуса дружбы
       tags:
