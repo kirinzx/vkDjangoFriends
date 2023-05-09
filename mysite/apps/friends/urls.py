@@ -2,9 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("invite", views.CreateInvite.as_view()),#inviter - id user'a, accepter - id user'a # TESTED
-    path("invite/<int:pk>/", views.InviteList.as_view()), # TESTED
-    path("friend/<int:pk>/", views.FriendView.as_view({"get":"list","delete":"destroy"})),#user # TESTED
-    path("acceptInvite",views.AcceptInvite.as_view()),# Inviter, Accepter # TESTED
-    path("status/<int:user>/<int:target>/",views.GetStatus.as_view()), #TESTED
+    path("user/invite", views.ActionInvite.as_view({"post":"create","put":"update"})),# TESTED
+    path("user/<int:user_id>/invite", views.InviteList.as_view()), # TESTED
+    path("user/<int:user_id>/friend", views.FriendList.as_view()), # TESTED
+    path("user/<int:user_id>/friend/<int:friend_id>",views.DeleteFriend.as_view()),
+    path("user/<int:user_id>/target/<int:target_id>/status",views.GetStatus.as_view()), #TESTED
 ]

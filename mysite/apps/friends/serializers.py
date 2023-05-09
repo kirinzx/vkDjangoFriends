@@ -1,10 +1,10 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Friend
+from .models import Relationship
 
 
-class FriendSerializer(ModelSerializer):
+class RelationshipSerializer(ModelSerializer):
     class Meta:
-        model = Friend
+        model = Relationship
         fields = ("user_1", "user_2")
         depth = 1
     

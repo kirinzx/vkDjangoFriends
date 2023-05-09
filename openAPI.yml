@@ -1,0 +1,320 @@
+openapi: "3.0.2"
+info:
+  title: Сервис друзей
+  version: 0.0.1
+servers:
+  - url: http://127.0.0.1:8000
+    description: dev server
+
+paths:
+  /user/{user_id}/friend:
+    get:
+      summary: Метод получения списка друзей
+      tags:
+        - Friends
+      operationId: getAllFriends
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID пользователя, список друзей которого вернется
+          schema:
+            type: integer
+          example: 1
+
+      responses:
+        "200":
+          description: Успешный ответ со списком друзей пользователя с индефикатором user_id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{user_id}/friend/{friend_id}:
+    delete:
+      summary: Метод удаления друга
+      tags:
+        - Friends
+      operationId: deleteFriend
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID пользователя, который хочет удалить друга
+          schema:
+            type: integer
+          example: 1
+        - name: friend_id
+          in: path
+          required: true
+          description: ID друга
+          schema:
+            type: integer
+          example: 2
+      responses:
+        "200":
+          description: Успешный ответ с пользователем, которого удалили
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/invite:
+    post:
+      summary: Метод отправки заявки в друзья
+      tags:
+        - Friends
+      operationId: createInvite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InviteCreate"
+      responses:
+        "200":
+          description: Успешный ответ c созданной заявкой или полем detail со значением "You are friends now"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Invite"
+                  - $ref: "#/components/schemas/SuccessInvite"
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Метод ответа на заявку в друзья
+      tags:
+        - Friends
+      operationId: answerToInvite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InviteAction"
+      responses:
+        "200":
+          description: Успешный ответ с пользователем(accepter), чью заявку отклонили или приняли
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{user_id}/invite:
+    get:
+      summary: Метод получения списка заявок
+      tags:
+        - Friends
+      operationId: getAllInvites
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID пользователя, список заявок которого вернется
+          schema:
+            type: integer
+          example: 1
+
+      responses:
+        "200":
+          description: Успешный ответ со списком заявок
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AllInvites"
+
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{int:user_id}/target/{int:target_id}/status:
+    get:
+      summary: Метод получения статуса дружбы
+      tags:
+        - Friends
+      operationId: getRelationshipStatus
+      parameters:
+        - name: user_id
+          in: path
+          description: ID пользователя, который хочет узнать статус дружбы
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: target_id
+          in: path
+          description: ID пользователя, с которым нужно узнать статус дружбы
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        "200":
+          description: Успешный ответ со списком заявок
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RelationshipStatus"
+
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user:
+    post:
+      summary: Создать пользователя
+      tags:
+        - Authentication
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserForBody"
+      responses:
+        "200":
+          description: Успешный ответ c созданным пользователем
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - username
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: kirin
+    UserForBody:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+          example: kirin
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          example: not found
+    Invite:
+      type: object
+      required:
+        - user_1
+        - user_2
+      properties:
+        user_1:
+          $ref: "#/components/schemas/User"
+        user_2:
+          $ref: "#/components/schemas/User"
+    Invites:
+      type: array
+      items:
+        $ref: "#/components/schemas/Invite"
+    AllInvites:
+      type: object
+      required:
+        - incoming invites
+        - outcoming invites
+      properties:
+        incoming invites:
+          $ref: "#/components/schemas/Invites"
+        outcoming invites:
+          $ref: "#/components/schemas/Invites"
+
+    InviteCreate:
+      type: object
+      required:
+        - inviter
+        - accepter
+      properties:
+        inviter:
+          type: integer
+          example: 1
+        accepter:
+          type: integer
+          example: 2
+    InviteAction:
+      type: object
+      required:
+        - inviter
+        - accepter
+        - action
+      properties:
+        inviter:
+          type: integer
+          example: 1
+        accepter:
+          type: integer
+          example: 2
+        action:
+          type: string
+          enum:
+            - accept
+            - decline
+    RelationshipStatus:
+      type: object
+      required:
+        - relationshipStatus
+      properties:
+        relationshipStatus:
+          type: string
+          enum:
+            - friends
+            - invite sended
+            - got an invite
+            - nothing
+    SuccessInvite:
+      type: object
+      required:
+        - successInvite
+      properties:
+        successInvite:
+          type: string
+          example: you are friends now
