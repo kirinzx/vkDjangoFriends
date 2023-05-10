@@ -16,7 +16,7 @@ class ActionInvite(viewsets.ViewSet):
         accepter = request.data.get("accepter")
 
         if inviter == accepter:
-            return Response(data={"detail":"inviter can't be equal to acepter"},status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"detail":"inviter can't be equal to accepter"},status=status.HTTP_400_BAD_REQUEST)
 
         if not UserProfile.objects.filter(id=inviter).exists() or not UserProfile.objects.filter(id=accepter).exists():
             return Response(data={"detail":"Not found"},status=status.HTTP_404_NOT_FOUND)
@@ -33,7 +33,7 @@ class ActionInvite(viewsets.ViewSet):
         if Relationship.objects.filter(user_1=accepter, user_2=inviter, status=False).exists():
             Relationship.objects.filter(
                 user_1=accepter, user_2=inviter, status=False).update(status=True)
-            return Response(data={"successInvite": "You are friends now"})
+            return Response(data={"successInvite": "Теперь вы друзья"})
 
         invite = Relationship.objects.create(user_1=UserProfile.objects.get(
             id=inviter), user_2=UserProfile.objects.get(id=accepter), status=False)
@@ -48,7 +48,7 @@ class ActionInvite(viewsets.ViewSet):
         action = request.data.get("action")
 
         if inviter == accepter:
-            return Response(data={"detail":"inviter can't be equal to acepter"},status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"detail":"inviter can't be equal to accepter"},status=status.HTTP_400_BAD_REQUEST)
 
         try:
             obj = Relationship.objects.get(user_1=inviter, user_2=accepter)
@@ -85,8 +85,8 @@ class InviteList(APIView):
         for i in range(len(listOfOutComingInvites)):
             listOfOutComingInvites[i] = UserProfile.objects.get(id=listOfOutComingInvites[i])
 
-        data["incoming invites"] = UserProfileSerializer(listOfInComingInvites,many=True).data
-        data['outcoming invites'] = UserProfileSerializer(listOfOutComingInvites,many=True).data
+        data["Входящие заявки"] = UserProfileSerializer(listOfInComingInvites,many=True).data
+        data['Исходящие заявки'] = UserProfileSerializer(listOfOutComingInvites,many=True).data
 
         return Response(data=data)
 
@@ -134,16 +134,16 @@ class GetStatus(APIView):
             if Relationship.objects.filter(user_1=user_id, user_2=target_id).exists():
                 obj = Relationship.objects.get(user_1=user_id, user_2=target_id)
                 if obj.status == True:
-                    return Response(data={"relationshipStatus":"friends"})
+                    return Response(data={"relationshipStatus":"Уже друзья"})
                 if obj.status == False:
-                    return Response(data={"relationshipStatus":"invite sended"})
+                    return Response(data={"relationshipStatus":"Есть исходящая заявка"})
             elif Relationship.objects.filter(user_2=user_id, user_1=target_id).exists():
                 obj = Relationship.objects.get(user_2=user_id, user_1=target_id)
                 if obj.status == True:
-                    return Response(data={"relationshipStatus":"friends"})
+                    return Response(data={"relationshipStatus":"Уже друзья"})
                 if obj.status == False:
-                    return Response(data={"relationshipStatus":"got an invite"})
+                    return Response(data={"relationshipStatus":"Есть входящая заявка"})
             else:
-                return Response(data={"relationshipStatis":"nothing"})
+                return Response(data={"relationshipStatis":"Нет ничего"})
         else:
             return Response(data={"detail":"Not found"},status=status.HTTP_404_NOT_FOUND)

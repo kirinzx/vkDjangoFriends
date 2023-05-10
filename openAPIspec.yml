@@ -83,7 +83,7 @@ paths:
               $ref: "#/components/schemas/InviteCreate"
       responses:
         "200":
-          description: Успешный ответ c созданной заявкой или полем detail со значением "You are friends now"
+          description: Успешный ответ c созданной заявкой или, в случае зеркальной заявки, с полем successInvite со значением "Вы теперь друзья"
           content:
             application/json:
               schema:
@@ -109,7 +109,7 @@ paths:
               $ref: "#/components/schemas/InviteAction"
       responses:
         "200":
-          description: Успешный ответ с пользователем(accepter), чью заявку отклонили или приняли
+          description: Успешный ответ с пользователем(inviter), чью заявку отклонили или приняли
           content:
             application/json:
               schema:
@@ -188,7 +188,7 @@ paths:
     post:
       summary: Создать пользователя
       tags:
-        - Authentication
+        - User
       operationId: createUser
       requestBody:
         required: true
@@ -260,12 +260,12 @@ components:
     AllInvites:
       type: object
       required:
-        - incoming invites
-        - outcoming invites
+        - Входящие заявки
+        - Исходящие заявки
       properties:
-        incoming invites:
+        Входящие заявки:
           $ref: "#/components/schemas/Invites"
-        outcoming invites:
+        Исходящие заявки:
           $ref: "#/components/schemas/Invites"
 
     InviteCreate:
@@ -306,15 +306,16 @@ components:
         relationshipStatus:
           type: string
           enum:
-            - friends
-            - invite sended
-            - got an invite
-            - nothing
+            - Уже друзья
+            - Есть исходящая заявка
+            - Есть входящая заявка
+            - Нет ничего
     SuccessInvite:
       type: object
       required:
         - successInvite
       properties:
         successInvite:
+          description: Ответ в том случае, если уже существовала зеркальная заявка
           type: string
           example: you are friends now
